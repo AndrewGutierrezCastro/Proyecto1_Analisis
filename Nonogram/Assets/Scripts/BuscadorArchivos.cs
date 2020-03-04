@@ -8,12 +8,23 @@ using UnityEngine.SceneManagement;
 
 public class BuscadorArchivos : MonoBehaviour
 {
-    private static BuscadorArchivos singelton;
+    public static BuscadorArchivos singelton { get; private set; }
     public string dirExp;
     public TMP_InputField txDir;
     public Button boton;
     public string direccion;
 
+
+    public void Awake()
+    {
+        if (singelton == null)
+        {
+            singelton = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+            Destroy(gameObject);
+    }
 
     private void Update()
     {
@@ -32,7 +43,7 @@ public class BuscadorArchivos : MonoBehaviour
     public void Confirmar()
     {
         direccion = txDir.text;
-        print(direccion);
         SceneManager.LoadScene("Matriz");
     }
+
 }
