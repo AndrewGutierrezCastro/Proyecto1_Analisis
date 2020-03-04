@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEditor;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class BuscadorArchivos : MonoBehaviour
 {
-
+    private static BuscadorArchivos singelton;
     public string dirExp;
     public TMP_InputField txDir;
     public Button boton;
@@ -32,5 +33,6 @@ public class BuscadorArchivos : MonoBehaviour
     {
         direccion = txDir.text;
         print(direccion);
+        SceneManager.LoadScene("Matriz");
     }
 }
