@@ -42,8 +42,9 @@ public class BuscadorArchivos : MonoBehaviour
 
     public void Confirmar()
     {
-        direccion = txDir.text;
+        this.direccion = txDir.text;
         SceneManager.LoadScene("Matriz");
+        print(direccion);
     }
 
 }
