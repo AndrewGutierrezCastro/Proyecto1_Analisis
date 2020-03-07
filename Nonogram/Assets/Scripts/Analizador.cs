@@ -8,9 +8,11 @@ public class Analizador : MonoBehaviour
 {
 
     public string path;
-    public int[] cantFilColnew=new int[2];
+    public int[] cantFilCol=new int[2]; //filas luego columnas
     public List<List<int>> matFil = new List<List<int>>();
     public List<List<int>> matCol = new List<List<int>>();
+    public GameObject cuadroSpawn;
+    public float tamannoCuadro;
 
     public void leerArch()
     {
@@ -27,8 +29,8 @@ public class Analizador : MonoBehaviour
             if (cont == 0)
             {
                 temp = line.Split(',');
-                cantFilColnew[0] = System.Int16.Parse(temp[0]);
-                cantFilColnew[1] = System.Int16.Parse(temp[1]);
+                cantFilCol[0] = System.Int16.Parse(temp[0]);
+                cantFilCol[1] = System.Int16.Parse(temp[1]);
             }
             if (line == "FILAS")
                 filCol = true;
@@ -49,25 +51,53 @@ public class Analizador : MonoBehaviour
         }
         arch.Close();
 
-        print("Columnas");
-        foreach (List<int> i in matCol)//De aqui para abajo para visualizar las matrices con las pistas
+        generarGrid();
+
+        //print("Columnas");
+        //foreach (List<int> i in matCol)//De aqui para abajo para visualizar las matrices con las pistas
+        //{
+        //    print("[");
+        //    foreach (int j in i)
+        //    {
+        //        print(j);
+        //    }
+        //    print("]");
+        //}
+        //print("Filas");
+        //foreach (List<int> i in matFil)
+        //{
+        //    print("[");
+        //    foreach (int j in i)
+        //    {
+        //        print(j);
+        //    }
+        //    print("]");
+        //}
+    }
+
+    public void generarGrid()
+    {
+        tamannoCuadro = 1;
+        print("cantidades");
+        print(cantFilCol[0]);
+        print(cantFilCol[1]);
+        print(tamannoCuadro);
+        for (int fila = 0; fila < cantFilCol[0]; fila++)
         {
-            print("[");
-            foreach (int j in i)
+            for (int columna = 0; columna < cantFilCol[1]; columna++)
             {
-                print(j);
+                GameObject cuadroNuevo=Instantiate(cuadroSpawn,transform.position,Quaternion.identity);
+
+                float posX = columna * tamannoCuadro;
+                float posY = fila * (-tamannoCuadro);
+                print("col");
+                print(columna);
+                print("tamaño");
+                print(tamannoCuadro);
+
+
+                cuadroNuevo.transform.position = new Vector2(posX, posY);
             }
-            print("]");
-        }
-        print("Filas");
-        foreach (List<int> i in matFil)
-        {
-            print("[");
-            foreach (int j in i)
-            {
-                print(j);
-            }
-            print("]");
         }
     }
 
