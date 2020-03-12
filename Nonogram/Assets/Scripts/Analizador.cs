@@ -13,8 +13,20 @@ public class Analizador : MonoBehaviour
     public List<List<int>> matCol = new List<List<int>>();
     public List<List<GameObject>> cuadricula = new List<List<GameObject>>();
     public GameObject cuadroSpawn;
+    public Camera cam;
     [SerializeField]
     public float tamannoCuadro;
+
+    public void Awake()
+    {
+        if (single == null)
+        {
+            single = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+            Destroy(gameObject);
+    }
 
     void Start()
     {
