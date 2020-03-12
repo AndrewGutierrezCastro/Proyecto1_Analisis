@@ -7,16 +7,18 @@ using UnityEngine;
 public class Analizador : MonoBehaviour
 {
 
-    public string path;
+    public static Analizador single { get; private set; }
     public int[] cantFilCol=new int[2]; //filas luego columnas
     public List<List<int>> matFil = new List<List<int>>();
     public List<List<int>> matCol = new List<List<int>>();
+    public List<List<GameObject>> cuadricula = new List<List<GameObject>>();
     public GameObject cuadroSpawn;
+    [SerializeField]
     public float tamannoCuadro;
 
-    public void leerArch()
+    void Start()
     {
-        path = BuscadorArchivos.singelton.direccion;
+        string path = BuscadorArchivos.singelton.direccion;
         List<int> tempo;
         string[] temp;
         int cont = 0;
@@ -52,53 +54,27 @@ public class Analizador : MonoBehaviour
         arch.Close();
 
         generarGrid();
-
-        //print("Columnas");
-        //foreach (List<int> i in matCol)//De aqui para abajo para visualizar las matrices con las pistas
-        //{
-        //    print("[");
-        //    foreach (int j in i)
-        //    {
-        //        print(j);
-        //    }
-        //    print("]");
-        //}
-        //print("Filas");
-        //foreach (List<int> i in matFil)
-        //{
-        //    print("[");
-        //    foreach (int j in i)
-        //    {
-        //        print(j);
-        //    }
-        //    print("]");
-        //}
     }
 
     public void generarGrid()
     {
-        tamannoCuadro = 1;
-        print("cantidades");
-        print(cantFilCol[0]);
-        print(cantFilCol[1]);
-        print(tamannoCuadro);
+
         for (int fila = 0; fila < cantFilCol[0]; fila++)
         {
+            List<GameObject> filCuad = new List<GameObject>();
             for (int columna = 0; columna < cantFilCol[1]; columna++)
             {
-                GameObject cuadroNuevo=Instantiate(cuadroSpawn,transform.position,Quaternion.identity);
+               GameObject cuadroNuevo=Instantiate(cuadroSpawn,transform.position,Quaternion.identity);
 
-                float posX = columna * tamannoCuadro;
-                float posY = fila * (-tamannoCuadro);
-                print("col");
-                print(columna);
-                print("tamaño");
-                print(tamannoCuadro);
+               float posX = (columna *tamannoCuadro)- ((cantFilCol[0] * tamannoCuadro) / 2);
+               float posY = (fila * -tamannoCuadro) + ((cantFilCol[1] * tamannoCuadro) / 2);
 
-
-                cuadroNuevo.transform.position = new Vector2(posX, posY);
+               cuadroNuevo.transform.position = new Vector2(posX, posY);
+               filCuad.Add(cuadroNuevo);
             }
+            cuadricula.Add(filCuad);
         }
+        print(cuadricula.Count);
     }
 
 }
