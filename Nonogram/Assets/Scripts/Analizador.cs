@@ -45,6 +45,10 @@ public class Analizador : MonoBehaviour
                 temp = line.Split(',');
                 cantFilCol[0] = System.Int16.Parse(temp[0]);
                 cantFilCol[1] = System.Int16.Parse(temp[1]);
+                if (cantFilCol[0] >= cantFilCol[1])
+                    cam.orthographicSize = cantFilCol[0];
+                else
+                    cam.orthographicSize = cantFilCol[1];
             }
             if (line == "FILAS")
                 filCol = true;
