@@ -36,18 +36,23 @@ public class Logica : MonoBehaviour
         
     }
     private void imprimir(int[][] pMatriz){
-
-        for(int f = 0; f < filas; f++)
-        {
-            for(int c = 0; c < columnas; c++)
-            {
-                Console.Write(pMatriz[f][c]+" ");
-            }
-            Console.WriteLine();
+        int [][] matRes;
+        if(transpuesta){
+            matRes = matTranSINBOOL(pMatriz);
         }
         if(pintar){
-            //pintarScrp.paintMatrix(pMatriz);
+            //pintarScrp.paintMatrix(matRes);
         }
+        
+        /*for(int f = 0; f < matRes.GetLength(0); f++)
+        {
+            for(int c = 0; c < matRes[0].GetLength(0); c++)
+            {
+                Console.Write(matRes[f][c]+" ");
+            }
+            Console.WriteLine();
+        }*/
+        
 
     }
     private void generarOrdenDeSolucion(){
@@ -138,13 +143,13 @@ public class Logica : MonoBehaviour
         {   
             if(pist == arrayPista.GetLength(0)){
                 Array.Copy(this.fila, pMatriz[rAfila], pMatriz[rAfila].GetLength(0));
-                Console.WriteLine();
+                /*Console.WriteLine();
                 Console.Write(indice+" ------------------------------ "+(ordenPistasFC.ElementAt(indice) ^ transpuesta));
-                Console.WriteLine();
+                Console.WriteLine();*/
                 imprimir(pMatriz);
-                Console.WriteLine();
+                /*Console.WriteLine();
                 Console.Write(indice+" ------------------------------ "+ordenPistasFC.ElementAt(indice) +"-"+transpuesta);
-                Console.WriteLine();
+                Console.WriteLine();*/
 
                 
 
