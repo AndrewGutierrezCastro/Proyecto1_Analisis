@@ -25,7 +25,7 @@ public class Logica : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {   
-        EmptyPintar = GameObject.Find("EmpyPintar");
+        EmptyPintar = GameObject.Find("EmptyPinta");
         pintarScrp = GetComponent<Pintar>();
 
     }
@@ -41,9 +41,9 @@ public class Logica : MonoBehaviour
             matRes = matTranSINBOOL(pMatriz);
         }
         if(pintar){
-            //pintarScrp.paintMatrix(matRes);
+           // pintarScrp.paintMatrix(matRes);
         }
-        
+
         /*for(int f = 0; f < matRes.GetLength(0); f++)
         {
             for(int c = 0; c < matRes[0].GetLength(0); c++)
