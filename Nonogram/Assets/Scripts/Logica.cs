@@ -25,15 +25,9 @@ public class Logica : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {   
-        EmptyPintar = GameObject.Find("EmptyPinta");
-        pintarScrp = GetComponent<Pintar>();
+        //EmptyPintar = GameObject.Find("EmptyPinta");
+        //pintarScrp = GetComponent<Pintar>();
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
     private void imprimir(int[][] pMatriz){
         int [][] matRes;
@@ -50,10 +44,18 @@ public class Logica : MonoBehaviour
             {
                 Console.Write(matRes[f][c]+" ");
             }
-            Console.WriteLine();
+            Console.WriteLine()
         }*/
         
 
+    }
+    public void Inicial()
+    {
+        setPistasFilas(Analizador.single.matFil.ToArray());
+        setPistasColumnas(Analizador.single.matCol.ToArray());
+        setMatrizSize(Analizador.single.cantFilCol[0], Analizador.single.cantFilCol[1]);
+        pintar = true;
+        resolver();
     }
     private void generarOrdenDeSolucion(){
         /*
@@ -147,6 +149,11 @@ public class Logica : MonoBehaviour
                 Console.Write(indice+" ------------------------------ "+(ordenPistasFC.ElementAt(indice) ^ transpuesta));
                 Console.WriteLine();*/
                 imprimir(pMatriz);
+                Analizador.single.matUpdate = pMatriz;
+                for(int atrasador=0; atrasador<1000;atrasador++)
+                {
+                    print(atrasador);
+                }
                 /*Console.WriteLine();
                 Console.Write(indice+" ------------------------------ "+ordenPistasFC.ElementAt(indice) +"-"+transpuesta);
                 Console.WriteLine();*/

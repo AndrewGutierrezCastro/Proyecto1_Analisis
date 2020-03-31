@@ -6,15 +6,29 @@ using UnityEngine.UI;
 
 public class Pintar : MonoBehaviour
 {
-    List<GameObject> cuadObj = new List<GameObject>();
-    int[][] matBol = new int[4][];
-
-    public void PintarCuadros()//entrada es la matriz bool
+    void FixedUpdate()
     {
-        matBol[0]=new int[]{0,2,2,1};
-        matBol[1]=new int[]{0,1,1,2};
-        matBol[2]=new int[]{2,2,2,2};
-        matBol[3]=new int[]{2,0,0,1};// creacion de matriz entera de prueba a ser reemplazada
+
+        List<List<GameObject>> cuad = Analizador.single.cuadricula;
+
+        for (int i = 0; i < Analizador.single.matUpdate.Length; i++)
+        {
+            for (int j = 0; j < Analizador.single.matUpdate[i].Length; j++)
+            {
+                if (Analizador.single.matUpdate[i][j] == 2)
+                {
+                    Renderer rend = cuad[i][j].GetComponent<Renderer>();
+                    rend.material.color = Color.black;
+                }
+            }
+        }
+    }
+    public void PintarCuadros(int[][] matBol)//entrada es la matriz bool
+    {
+        //matBol[0]=new int[]{0,2,2,1};
+        //matBol[1]=new int[]{0,1,1,2};
+        //matBol[2]=new int[]{2,2,2,2};
+        //matBol[3]=new int[]{2,0,0,1};
 
        List<List<GameObject>> cuad=Analizador.single.cuadricula;
 
