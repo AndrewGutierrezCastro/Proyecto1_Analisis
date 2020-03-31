@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 public class Logica : MonoBehaviour
 {
@@ -55,7 +56,8 @@ public class Logica : MonoBehaviour
         setPistasColumnas(Analizador.single.matCol.ToArray());
         setMatrizSize(Analizador.single.cantFilCol[0], Analizador.single.cantFilCol[1]);
         pintar = true;
-        resolver();
+        Thread hilo=new Thread(resolver);
+        hilo.Start();
     }
     private void generarOrdenDeSolucion(){
         /*
@@ -149,11 +151,16 @@ public class Logica : MonoBehaviour
                 Console.Write(indice+" ------------------------------ "+(ordenPistasFC.ElementAt(indice) ^ transpuesta));
                 Console.WriteLine();*/
                 imprimir(pMatriz);
-                Analizador.single.matUpdate = pMatriz;
-                for(int atrasador=0; atrasador<1000;atrasador++)
+                int[][] matRes;
+                if (transpuesta)
                 {
-                    print(atrasador);
+                    matRes = matTranSINBOOL(pMatriz);
                 }
+                else
+                {
+                    matRes = pMatriz;
+                }
+                Analizador.single.matUpdate = matRes;
                 /*Console.WriteLine();
                 Console.Write(indice+" ------------------------------ "+ordenPistasFC.ElementAt(indice) +"-"+transpuesta);
                 Console.WriteLine();*/
