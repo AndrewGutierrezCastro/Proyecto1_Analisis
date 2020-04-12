@@ -31,24 +31,19 @@ public class Logica : MonoBehaviour
 
     }
     private void imprimir(int[][] pMatriz){
-        int [][] matRes;
-        if(transpuesta){
-            matRes = matTranSINBOOL(pMatriz);
-        }
         if(pintar){
-           // pintarScrp.paintMatrix(matRes);
-        }
-
-        /*for(int f = 0; f < matRes.GetLength(0); f++)
-        {
-            for(int c = 0; c < matRes[0].GetLength(0); c++)
+            int[][] matRes;
+            if (transpuesta)
             {
-                Console.Write(matRes[f][c]+" ");
+                matRes = matTranSINBOOL(pMatriz);
             }
-            Console.WriteLine()
-        }*/
+            else
+            {
+                matRes = pMatriz;
+            }
+            Analizador.single.matUpdate = matRes;
+        }
         
-
     }
     public void Inicial()
     {
@@ -58,31 +53,28 @@ public class Logica : MonoBehaviour
         pintar = true;
         Thread hilo=new Thread(resolver);
         hilo.Start();
+
+
     }
     private void generarOrdenDeSolucion(){
         /*
         Este metodo genera dos listas el cual es el orden a resolver
         del nonograma y si estan en las colunmas o filas*/
-        int tope = columnas;
-        if(filas >= columnas){
-            tope = filas;
-        }
+        int tope = filas;
         for (int i = tope; i >= 0; i--)
         {
             for (int j = 0; j < filas; j++)
             {   
-                if(pistColMaList[j].Sum() == i){
-                    ordenPistas.Add(j);
-                    ordenPistasFC.Add(true);
-                }
-                if(pistFilMaList[j].Sum() == i){
-                    ordenPistas.Add(j);
-                    ordenPistasFC.Add(false);
-                }
-                
+                ordenPistas.Add(j);
+                ordenPistasFC.Add(false); 
             }
 
+
         }
+            
+
+
+        
     }
 
     public void resolver(){
@@ -114,26 +106,29 @@ public class Logica : MonoBehaviour
                 pMatriz = matTranspues(pMatriz);
             }
             matriz = pMatriz;
+            pintar = true;
+            imprimir(matriz);
             return true;
         }
-        int rAfila = ordenPistas.ElementAt(indice); //Indice de la fila a resolver
+        int indexFila = ordenPistas.ElementAt(indice); //Indice de la fila a resolver
         if(ordenPistasFC.ElementAt(indice) ^ transpuesta){ 
             // XOR de, ¿Se debe transponer? xor ¿Esta transpuesta?
             pMatriz = matTranspues(pMatriz);
         }
         //Tomar la fila correspondiente con el indice calculado anteriormente
-        int[] Lfila = new int[pMatriz[rAfila].GetLength(0)];
-        Array.Copy(pMatriz[rAfila], Lfila, pMatriz[rAfila].GetLength(0));
+        int[] Lfila = new int[pMatriz[indexFila].GetLength(0)];
+        Array.Copy(pMatriz[indexFila], Lfila, pMatriz[indexFila].GetLength(0));
         //Hacer un respaldo con el estado actual para poder intentar mas combianciones o bien
         // devolverse sin cambios
 
-        setArrayPistas(rAfila);//arreglo que contiene las pistas de dicha fila
+        setArrayPistas(indexFila);//arreglo que contiene las pistas de dicha fila
+
         int[][] filasRespaldo = new int[arrayPista.GetLength(0)+1][];
         for (int i = 0; i < arrayPista.GetLength(0)+1; i++)
         {
             filasRespaldo[i] = new int[Lfila.GetLength(0)];
         }     
-        Array.Copy(pMatriz[rAfila], filasRespaldo[0], pMatriz[rAfila].GetLength(0));
+        Array.Copy(pMatriz[indexFila], filasRespaldo[0], pMatriz[indexFila].GetLength(0));
         /*  2 pistas a pintar por tanto 2 respaldos
             [0,0,0,0,0],
             [1,2,0,0,0]
@@ -146,26 +141,8 @@ public class Logica : MonoBehaviour
         while(pist <= arrayPista.GetLength(0))
         {   
             if(pist == arrayPista.GetLength(0)){
-                Array.Copy(this.fila, pMatriz[rAfila], pMatriz[rAfila].GetLength(0));
-                /*Console.WriteLine();
-                Console.Write(indice+" ------------------------------ "+(ordenPistasFC.ElementAt(indice) ^ transpuesta));
-                Console.WriteLine();*/
-                imprimir(pMatriz);
-                int[][] matRes;
-                if (transpuesta)
-                {
-                    matRes = matTranSINBOOL(pMatriz);
-                }
-                else
-                {
-                    matRes = pMatriz;
-                }
-                Analizador.single.matUpdate = matRes;
-                /*Console.WriteLine();
-                Console.Write(indice+" ------------------------------ "+ordenPistasFC.ElementAt(indice) +"-"+transpuesta);
-                Console.WriteLine();*/
-
-                
+                Array.Copy(this.fila, pMatriz[indexFila], pMatriz[indexFila].GetLength(0));
+                imprimir(pMatriz);               
 
                 if(resolAux(++indice, pMatriz)){
                     //llamarse nuevamente; incrementar el indice de la lista ordenPistas 
@@ -175,6 +152,12 @@ public class Logica : MonoBehaviour
                     //Si no pudo pintar las pistas en la fila, borrar cambios e intentar 
                     //nuevamente 
                     //Aca seria donde se hace el "Backtracking" en teoria
+                    indice--;//decrementar el indice de ordenPistas por el if anterior  
+                    /*devolver el valor booleano de la transpuesta al de la actual fila
+                        en las llamadas recursivas pudo cambiarse
+                    */
+                    transpuesta = ordenPistasFC.ElementAt(indice);
+                    setArrayPistas(indexFila);
                     if(pist > 0 ){
                         pist--;
                         Array.Copy(filasRespaldo[pist], Lfila, filasRespaldo[pist].GetLength(0));
@@ -182,34 +165,34 @@ public class Logica : MonoBehaviour
                     }else{
                         return false;
                     }                 
-                    indice--;//decrementar el indice de ordenPistas por el if anterior  
-                    /*devolver el valor booleano de la transpuesta al de la actual fila
-                        en las llamadas recursivas pudo cambiarse
-                    */
-                    transpuesta = ordenPistasFC.ElementAt(indice);
-                    setArrayPistas(rAfila);
+                    
                     //Borrar cambios en la matriz local
-                    Array.Copy(filasRespaldo[0], pMatriz[rAfila], filasRespaldo[0].GetLength(0)); 
+                    Array.Copy(filasRespaldo[0], pMatriz[indexFila], filasRespaldo[0].GetLength(0)); 
                                         
                 }
-            }
-            if(indice == 4 & pist == 0){
-
-            }                 
-            if (combinacionesRecursiva(pist, Lfila, final, rAfila, pMatriz))
+            }               
+            
+            if (combinacionesRecursiva(pist, Lfila, final, indexFila, pMatriz))
             {
                 lisVar[pist] = inicio;
                 pist++;
                 Array.Copy(this.fila, filasRespaldo[pist], this.fila.GetLength(0)); 
-            }
-            else{
+            }else{
                 if (pist > 0){   
                     pist--;
                     Array.Copy(filasRespaldo[pist], Lfila, filasRespaldo[pist].GetLength(0));
                     final = lisVar[pist] + 1;
-                }
-                else
-                {
+                    if(final+arrayPista[pist] >= Lfila.GetLength(0)){
+                        if (pist > 0){   
+                            pist--;
+                            Array.Copy(filasRespaldo[pist], Lfila, filasRespaldo[pist].GetLength(0));
+                            final = lisVar[pist] + 1;
+                        }else{
+                            return false;
+                        }
+                            
+                    }
+                }else{
                     return false;
                 } 
             }
@@ -219,7 +202,7 @@ public class Logica : MonoBehaviour
     }
         //Si intento pintar en todos los inicios posibles y no se logro retornar falso
         //es imposible esta combinacion, hacer Backtracking  
-    private Boolean revisarFC(int[] pFila, int inicio, int final, int numFila, int[][] pMatriz1){
+    private Boolean revisarFC(int[] pFila, int inicio, int final, int numFila, int[][] pMatriz){
         /*Revisar filas columnas
         Se recibe la fila con la posible combinacion correcta, de donde se comenzo a pintar hasta
         en donde se termino. El numero de la fila para poder agregarla a la matriz de respaldo
@@ -232,94 +215,26 @@ public class Logica : MonoBehaviour
             Si esto es posible entonces la combinacion de la fila no imposibilita el pintado de las columnas
         */
         
-        Boolean revisarFC_Aux( int indicePista, int[] CRfila, int indiceFila,int[][] pMatriz, List<int> pListPistas){
-        int cantidadPtsSeguidos = pListPistas.ElementAt(indicePista);
-        int corredorPosiciones = 0;
-        Boolean noSepuede = false;
-        
-            while(cantidadPtsSeguidos+corredorPosiciones+indiceFila <= CRfila.GetLength(0)){
-                
-                noSepuede = false;
-                int hastaFORpaint = cantidadPtsSeguidos+corredorPosiciones+indiceFila;
-                int[] a = Array.FindAll(CRfila,(int b) =>{ return b == 1; } );
-                if( a.GetLength(0) > pListPistas.Sum()){
-                    break;
-                }
-                for(int i = (corredorPosiciones+indiceFila); i < hastaFORpaint; i++){  
-                        
-                        if(CRfila[i] == 2 ){
-                            // fila = 0 es vacia, fila = 1 es pintada, fila = 2 es X
-                            noSepuede = true;
-                            break;                         
-                        }                      
-                }
-                int index = (indiceFila + corredorPosiciones)-1;
-                if( index >= 0){
-                    if(CRfila[index] == 1){
-                        noSepuede = true;
-                    }                  
-                }
-                if(hastaFORpaint < CRfila.GetLength(0)){
-                    if(CRfila[hastaFORpaint] == 1){
-                        noSepuede = true;
-                    }
-                }
-
-                if(!noSepuede){             
-                    if(++indicePista < pListPistas.Count ){
-                        //hay mas cuadros por revisar
-                        
-                        if(revisarFC_Aux( indicePista, CRfila,  indiceFila, pMatriz,  pListPistas)){
-                            //si la combinacion de las pistas funciono
-                            //entonces no incumple ningun vector vertical
-                            return true;
-                        }else{
-                            //si no funciono la revision entonces hay que chequear otra,
-                            //para ver si puede cumplir de alguna forma
-                            indicePista--;
-                            //se debe decrementar porque arriba se incremento para resolver la siguiente pista
-                            //entones debo volver para revisar de otra forma
-                        }
-                    }else{
-                    //no hay mas cuadros por revisar
-                    //no hay mas pistas
-                    //y la combinancion que se hizo no incumple nada
-                    return true; 
-                    }
-                }
-                //sino funciono la revision entonces
-                //correr posicion y seguir con la siguiente posible combinacion             
-                corredorPosiciones++;
-                if(cantidadPtsSeguidos+corredorPosiciones+indiceFila > CRfila.GetLength(0)){
-                    return false;
-                }
-            }
-        return false;
-        //de ninguna forma logro cumplir entonces retornar falso
-    }
-        
-        //Respaldar la matriz donde no esta incluida la posible solucion
-        //y al respaldo se le agrega la posible solucion para revisar
         int[][] matrizRespaldo = new int[matriz.GetLength(0)][];          
-        for (int k = 0; k < matriz.GetLength(0); k++)
-        {   
-            matrizRespaldo[k] = new int[pMatriz1[k].GetLength(0)];
-            Array.Copy(pMatriz1[k], matrizRespaldo[k], matrizRespaldo.GetLength(0));
-        }
-        matrizRespaldo[numFila] = pFila;
-        matrizRespaldo = matTranSINBOOL(matrizRespaldo);
-        List<int> copyPista;
-        for(int i = inicio; i <= final; i++){
-            if(transpuesta){
-                copyPista = pistFilMaList[i];
-            }else{
+            for (int k = 0; k < matriz.GetLength(0); k++)
+            {   
+                matrizRespaldo[k] = new int[pMatriz[k].GetLength(0)];
+                Array.Copy(pMatriz[k], matrizRespaldo[k], matrizRespaldo.GetLength(0));
+            }
+            matrizRespaldo[numFila] = pFila;
+            matrizRespaldo = matTranSINBOOL(matrizRespaldo);
+            List<int> copyPista;
+            Revisadores.Revisador[] revisadores = new Revisadores.Revisador[filas];
+            for(int i = inicio; i <= final; i++){
                 copyPista = pistColMaList[i];
+                revisadores[i] = new Revisadores.Revisador(0, matrizRespaldo[i], 0, copyPista, numFila);
+                revisadores[i].revisarColumnas();
+                if(revisadores[i].errorColumna){
+                    return false;
+                }                   
             }
-            if( !(revisarFC_Aux(0, matrizRespaldo[i], 0, matrizRespaldo, copyPista) ) ) {
-                return false;
-            }
-        }
-        return true;
+
+            return true;
 
     }
     
@@ -365,21 +280,11 @@ public class Logica : MonoBehaviour
                 break;
             }
             indiceFilaRespaldo = indiceFila;
-            int[] a;
-
             for(int i = (corredorPosiciones+indiceFila); i < hastaFORpaint; i++){
     
                     if(CRfila[i] == 0 || CRfila[i] == 1 ){
                         // fila = 0 es vacia, fila = 1 es pintada, fila = 2 es X
-                        CRfila[i] = 1;
-                        a = Array.FindAll(CRfila,(int b) =>{ return b == 1; } );
-                        //Encontrar todo los 1 en la fila, si el mismo excede la
-                        //cantidad maxima de la pista, no se puede pintar de 
-                        //esta forma
-                        if(a.GetLength(0) > arrayPista.Sum()){
-                            noSepuede = true;
-                            break;
-                        }
+                        CRfila[i] = 1;                       
                     }else{
                         noSepuede = true;
                         break;
