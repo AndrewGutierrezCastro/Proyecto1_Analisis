@@ -9,8 +9,8 @@ public class Analizador : MonoBehaviour
 
     public static Analizador single { get; private set; }
     public int[] cantFilCol=new int[2]; //filas luego columnas
-    public List<List<int>> matFil = new List<List<int>>();
-    public List<List<int>> matCol = new List<List<int>>();
+    public List<int[]> matFil = new List<int[]>();
+    public List<int[]> matCol = new List<int[]>();
     public List<List<GameObject>> cuadricula = new List<List<GameObject>>();
     public int[][] matUpdate;
     public GameObject cuadroSpawn;
@@ -62,9 +62,9 @@ public class Analizador : MonoBehaviour
                 foreach (string i in temp)
                     tempo.Add(System.Int16.Parse(i));
                 if (filCol)
-                    matFil.Add(tempo);
+                    matFil.Add(tempo.ToArray());
                 else
-                    matCol.Add(tempo);
+                    matCol.Add(tempo.ToArray());
             }
 
             cont++;

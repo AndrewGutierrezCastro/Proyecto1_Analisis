@@ -891,12 +891,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1343768537}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 012711df49763e446b34a50842201fec, type: 3}
+  m_Script: {fileID: 11500000, guid: 3d675a0d49e7c7944bcbc78fcb74644f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   pintar: 0
-  filas: 10
-  columnas: 10
+  filasTamano: 0
+  colTamano: 0
 --- !u!4 &1343768539
 Transform:
   m_ObjectHideFlags: 0
