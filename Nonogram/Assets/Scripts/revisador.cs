@@ -38,7 +38,7 @@ class Revisador{
             return;
         }else if(indiceFila == 0 & entroFor & numFila == 0){
             return;
-        }else if(indiceFila == 0 & !encontrado){
+        }else if(!encontrado){
             return;
         }
            

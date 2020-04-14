@@ -61,8 +61,6 @@ public class Logica : MonoBehaviour
         Este metodo genera dos listas el cual es el orden a resolver
         del nonograma y si estan en las colunmas o filas*/
         int tope = filas;
-        for (int i = tope; i >= 0; i--)
-        {
             for (int j = 0; j < filas; j++)
             {   
                 ordenPistas.Add(j);
@@ -70,7 +68,7 @@ public class Logica : MonoBehaviour
             }
 
 
-        }
+
             
 
 
@@ -202,7 +200,7 @@ public class Logica : MonoBehaviour
     }
         //Si intento pintar en todos los inicios posibles y no se logro retornar falso
         //es imposible esta combinacion, hacer Backtracking  
-    private Boolean revisarFC(int[] pFila, int inicio, int final, int numFila, int[][] pMatriz){
+    private Boolean revisarFC(int[] pFila, int inicio, int final, int numFila, int[][] pMatriz, Boolean esUltPist){
         /*Revisar filas columnas
         Se recibe la fila con la posible combinacion correcta, de donde se comenzo a pintar hasta
         en donde se termino. El numero de la fila para poder agregarla a la matriz de respaldo
@@ -225,6 +223,10 @@ public class Logica : MonoBehaviour
             matrizRespaldo = matTranSINBOOL(matrizRespaldo);
             List<int> copyPista;
             Revisadores.Revisador[] revisadores = new Revisadores.Revisador[filas];
+            if(esUltPist){
+                inicio = 0;
+                final = columnas-1;
+            }
             for(int i = inicio; i <= final; i++){
                 copyPista = pistColMaList[i];
                 revisadores[i] = new Revisadores.Revisador(0, matrizRespaldo[i], 0, copyPista, numFila);
@@ -304,7 +306,7 @@ public class Logica : MonoBehaviour
             }
 
             if(!noSepuede && revisarFC(CRfila, (indiceFila+corredorPosiciones)
-            , hastaFORpaint-1, numFila, pMatriz)){ 
+            , hastaFORpaint-1, numFila, pMatriz, indicePista>= arrayPista.GetLength(0)-1)){ 
                 // enviar la fila, de donde empece a pintar
                 // revisar si la combinacion funciono
                 //incrementar el indice de la pista para pasar
