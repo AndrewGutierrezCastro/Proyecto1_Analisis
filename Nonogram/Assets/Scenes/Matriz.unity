@@ -895,8 +895,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pintar: 0
-  filasTamano: 0
-  colTamano: 0
+  filasTamano: 10
+  colTamano: 10
 --- !u!4 &1343768539
 Transform:
   m_ObjectHideFlags: 0
