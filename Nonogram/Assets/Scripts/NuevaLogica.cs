@@ -187,21 +187,53 @@ public class NuevaLogica : MonoBehaviour
         List<int> copyPista;
         Revisadores.Revisador[] revisadores = new Revisadores.Revisador[filasTamano];
         int inicio = pColumnasEditadas.First(), final = pColumnasEditadas.Last();
-        if (esUltPist)
-        {
-            inicio = 0;
-            final = colTamano - 1;
-        }
-        for (int i = inicio; i <= final; i++)
-        {
-            copyPista = pistColMaList[i].ToList();
-            revisadores[i] = new Revisadores.Revisador(0, nuevaMatriz[i], 0, copyPista, numFila);
-            revisadores[i].revisarColumnas();
-            if (revisadores[i].errorColumna)
-            {
-                return false;
+        int iniRes=0, finRes=0;
+        Boolean unaPista = false;
+        if(esUltPist){
+                if(pistFilMaList[numFila].GetLength(0) > 1){
+                    inicio = 0;
+                    final = nuevaMatriz.GetLength(0)-1;
+                }else{
+                    for(int i = inicio; i <= final; i++){
+                        copyPista = pistColMaList[i].ToList();
+                        revisadores[i] = new Revisadores.Revisador(0, nuevaMatriz[i], 0, copyPista, numFila);
+                        revisadores[i].revisarColumnas();
+                        if(revisadores[i].errorColumna){
+                            return false;
+                        }                  
+                    }
+                    unaPista = true;
+                    iniRes = inicio;
+                    finRes = final;
+                    inicio = 0;
+                    final = nuevaMatriz.GetLength(0)-1;
+                } 
             }
-        }
+            for(int i = inicio; i <= final; i++){
+                if(unaPista){
+                    if(i>=iniRes & i<=finRes){
+                        continue;
+                    }
+                }
+                copyPista = pistColMaList[i].ToList();
+                revisadores[i] = new Revisadores.Revisador(0, nuevaMatriz[i], 0, copyPista, numFila);
+                revisadores[i].revisarColumnas();
+                if(revisadores[i].errorColumna){
+                    return false;
+                }                   
+            }
+            if(esUltPist & numFila<pMatrizTmp.GetLength(0)-1){
+                int pistasSigFila = 0;
+                for (int i = inicio; i <= final; i++)
+                {   
+                    if(revisadores[i].faltaPunto>0){
+                        pistasSigFila++;
+                    }
+                }
+                if(pistasSigFila > pistFilMaList[numFila+1].Sum()){
+                    return false;
+                }
+            }
         return true;
     }
 }

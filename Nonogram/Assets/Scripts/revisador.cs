@@ -11,6 +11,7 @@ class Revisador{
     private int indiceFila;
     private List<int> pListPistas;
     private int numFila;
+    public int faltaPunto;
     public Boolean errorColumna = false;
     public Revisador(int pIndicePista, int[] pCRfila, int pIndiceFila, List<int> ppListPistas, int pNumFila){
         indicePista = pIndicePista;
@@ -20,91 +21,73 @@ class Revisador{
         numFila = pNumFila;
     }
     public void revisarColumnas(){
-        int cantidadPtsSeguidos = pListPistas.ElementAt(indicePista);
-        Boolean noSepuede, entroFor = false, encontrado = false;
-        int hastaFORpaint;
-        for(int i = indiceFila; i<=numFila; i++){ 
-            entroFor = true;
-            if(CRfila[i] == 1){
-                indiceFila = i;
-                encontrado = true;
-                break;
-            }
-        }
-        List<int> newList = pListPistas.GetRange(indicePista,pListPistas.Count-indicePista);
-        if(newList.Sum() + (newList.Count-1)+indiceFila > CRfila.GetLength(0)){
-            //Si para poder poder poner todos los puntos se sale del largo del arreglo esta malo
-            errorColumna = true;
-            return;
-        }else if(indiceFila == 0 & entroFor & numFila == 0){
-            return;
-        }else if(!encontrado){
-            return;
-        }
-           
-        noSepuede = false;
-        hastaFORpaint = cantidadPtsSeguidos+indiceFila; 
-        for(int i = indiceFila; i < hastaFORpaint; i++){ 
-                if(i > numFila){
-                    return;
-                }   
-                if(CRfila[i] != 1){
-                    // fila = 0 es vacia, fila = 1 es pintada, fila = 2 es X
-                    noSepuede = true;
-                    break;                         
-                }                      
-        }
-        if(noSepuede){
-            errorColumna = true;
-            return;
-        }else{
-            if(hastaFORpaint < CRfila.GetLength(0)){
-                if(CRfila[hastaFORpaint] == 1){
-                    noSepuede = true;
-                }else{
-                    CRfila[hastaFORpaint]=2;
+        for(int m=0; m<pListPistas.Count; m++){
+            int cantidadPtsSeguidos = pListPistas.ElementAt(indicePista);
+            Boolean noSepuede, entroFor = false, encontrado = false;
+            int hastaFORpaint;
+            for(int i = indiceFila; i<=numFila; i++){ 
+                entroFor = true;
+                if(CRfila[i] == 1){
+                    indiceFila = i;
+                    encontrado = true;
+                    break;
                 }
             }
-            if(indiceFila-1 > 0){
-                CRfila[indiceFila-1]=2;
-            }
-        }
-
-        if(!noSepuede ){            
-  
-            if(++indicePista < pListPistas.Count ){
-                //hay mas cuadros por revisar
-                Revisador sigRev = null;
-                if(!(hastaFORpaint+1 > numFila)){
-                    sigRev = new Revisador(indicePista, CRfila,  hastaFORpaint+1,  pListPistas, numFila);
-                    sigRev.revisarColumnas();
-                    if(!sigRev.errorColumna){
-                    //si la combinacion de las pistas funciono
-                    //entonces no incumple ningun vector vertical
-                        return;
-                    }else{
-                        //si no funciono la revision entonces hay que chequear otra,
-                        //para ver si puede cumplir de alguna forma
-                        indicePista--;
-                        //se debe decrementar porque arriba se incremento para resolver la siguiente pista
-                        //entones debo volver para revisar de otra forma
-                    }
-                }else{
-                    return;
-                }
-                
-            }else{
-                int[] x = Array.FindAll(CRfila,(int a) =>{ return a == 1; } );
-                if(x.Sum() > pListPistas.Sum()){
-                    errorColumna = true;
-                }
+            List<int> newList = pListPistas.GetRange(indicePista,pListPistas.Count-indicePista);
+            if(newList.Sum() + (newList.Count-1)+indiceFila > CRfila.GetLength(0)){
+                errorColumna=true;
                 return;
-            }
-        }
+            }else if(indiceFila == 0 & entroFor & numFila == 0){
+                return;
+            }else if(!encontrado){
+                    //Si para poder poder poner todos los puntos se sale del largo del arreglo esta malo
+                    return;
+                }
             
-        errorColumna = true;    
-        return;
-        //de ninguna forma logro cumplir entonces retornar falso
+            noSepuede = false;
+            hastaFORpaint = cantidadPtsSeguidos+indiceFila; 
+            for(int i = indiceFila; i < hastaFORpaint; i++){ 
+                    if(i > numFila){
+                        faltaPunto = 1;
+                        return;
+                    }   
+                    if(CRfila[i] != 1){
+                        noSepuede = true;
+                        break;                         
+                    }                      
+            }
+            if(noSepuede){
+                errorColumna = true;
+                return;
+            }else{
+                if(hastaFORpaint < CRfila.GetLength(0)){
+                    if(CRfila[hastaFORpaint] == 1){
+                        noSepuede = true;
+                    }else{
+                        CRfila[hastaFORpaint]=2;
+                    }
+                }
+            }
+            if(!noSepuede ){            
+                if(++indicePista < pListPistas.Count ){
+                    //hay mas cuadros por revisar
+                    if(!(hastaFORpaint+1 > numFila)){
+                        indiceFila = hastaFORpaint+1;
+                        continue;
+                    }
+                    return; 
+                }else{
+                    int[] a = Array.FindAll(CRfila,(int x) =>{ return x == 1; } );
+                    if(a.Sum() > pListPistas.Sum()){
+                        errorColumna = true;
+                    }
+                    return;
+                }
+            }           
+            errorColumna = true;    
+            return;
+            //de ninguna forma logro cumplir entonces retornar falso
+            }
     }
  
     public void Threads(){
