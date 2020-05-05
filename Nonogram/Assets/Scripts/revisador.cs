@@ -63,8 +63,6 @@ class Revisador{
                 if(hastaFORpaint < CRfila.GetLength(0)){
                     if(CRfila[hastaFORpaint] == 1){
                         noSepuede = true;
-                    }else{
-                        CRfila[hastaFORpaint]=2;
                     }
                 }
             }
@@ -77,8 +75,7 @@ class Revisador{
                     }
                     return; 
                 }else{
-                    int[] a = Array.FindAll(CRfila,(int x) =>{ return x == 1; } );
-                    if(a.Sum() > pListPistas.Sum()){
+                    if(CRfila.Sum() > pListPistas.Sum()){
                         errorColumna = true;
                     }
                     return;
