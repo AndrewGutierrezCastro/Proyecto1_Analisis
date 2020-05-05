@@ -54,7 +54,8 @@ class Revisador{
                     if(CRfila[i] != 1){
                         noSepuede = true;
                         break;                         
-                    }                      
+                    }
+                                          
             }
             if(noSepuede){
                 errorColumna = true;
@@ -77,6 +78,7 @@ class Revisador{
                 }else{
                     if(CRfila.Sum() > pListPistas.Sum()){
                         errorColumna = true;
+
                     }
                     return;
                 }
