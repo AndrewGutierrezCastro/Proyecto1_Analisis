@@ -38,6 +38,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Interfaz
+    uniqueID: 2685413049
+    locked: 0
   - name: Fondo
     uniqueID: 2269228947
     locked: 0

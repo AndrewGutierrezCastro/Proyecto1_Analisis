@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine;
+using TMPro;
 
 public class Analizador : MonoBehaviour
 {
@@ -48,9 +49,9 @@ public class Analizador : MonoBehaviour
                 cantFilCol[1] = System.Int16.Parse(temp[1]);
                 matUpdate = new int[cantFilCol[0]][];
                 if (cantFilCol[0] >= cantFilCol[1])
-                    cam.orthographicSize = cantFilCol[0];
+                    cam.orthographicSize = cantFilCol[0]+2;
                 else
-                    cam.orthographicSize = cantFilCol[1];
+                    cam.orthographicSize = cantFilCol[1]+2;
             }
             if (line == "FILAS")
                 filCol = true;
@@ -89,13 +90,43 @@ public class Analizador : MonoBehaviour
                 float posY = (fila * -tamannoCuadro) + ((cantFilCol[1] * tamannoCuadro) / 2);
 
                 cuadroNuevo.transform.position = new Vector2(posX, posY);
+                if (fila == 0)
+                {
+                    GameObject pistAct = new GameObject();
+                    pistAct.AddComponent<TextMeshPro>();
+                    pistAct.GetComponent<TextMeshPro>().renderer.sortingOrder=20;
+                    pistAct.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,1);
+                    pistAct.GetComponent<TextMeshPro>().alignment = TMPro.TextAlignmentOptions.Bottom;
+                    pistAct.GetComponent<TextMeshPro>().fontSize = 10;
+                    string tx = "";
+                    foreach (int t in matCol[columna])
+                    {
+                        tx = tx + t.ToString() + " ";
+                    }
+                    pistAct.GetComponent<TextMeshPro>().text=tx;
+                    pistAct.GetComponent<TextMeshPro>().transform.position = new Vector2(posX, posY + 3);
+                }
+                if (columna == 0)
+                {
+                    GameObject pistAct = new GameObject();
+                    pistAct.AddComponent<TextMeshPro>();
+                    pistAct.GetComponent<TextMeshPro>().renderer.sortingOrder = 20;
+                    pistAct.GetComponent<TextMeshPro>().alignment = TMPro.TextAlignmentOptions.Midline;
+                    pistAct.GetComponent<TextMeshPro>().fontSize = 10;
+                    string tx = "";
+                    foreach (int t in matFil[fila])
+                    {
+                        tx = tx + t.ToString() + " ";
+                    }
+                    pistAct.GetComponent<TextMeshPro>().text=tx;
+                    pistAct.GetComponent<TextMeshPro>().transform.position = new Vector2(posX - 3, posY);
+                }
                 filCuad.Add(cuadroNuevo);
-                temp[columna] = 0;    
+                temp[columna] = 0;
             }
             cuadricula.Add(filCuad);
             matUpdate[fila] = temp;
         }
-        print(cuadricula.Count);
     }
 
 }

@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Diagnostics;
 using UnityEngine;
 
 public class NuevaLogica : MonoBehaviour
 {
     public int[][] matriz;
     public Boolean pintar = false;
-    public int filasTamano;
-    public int colTamano;
+    public int filasTamano = 10;
+    public int colTamano = 10;
     private List<int> ordenPistas = new List<int>();
     private int[][] pistFilMaList; //cambiar a array de listas
     private int[][] pistColMaList; //cambiar a array de listas
+    private int numContinuable = 0;
+    private List<int> colEdit = new List<int>();
 
     //public void imprimir(int[][] matImp)
     //{
@@ -49,14 +52,20 @@ public class NuevaLogica : MonoBehaviour
         //imprimir(matriz);
 
     }
+    public void cambiarBool()
+    {
+        if (pintar == true)
+            pintar = false;
+        else
+            pintar = true;
+
+    }
 
     public void Inicial()
     {
         setPistasFilas(Analizador.single.matFil.ToArray());
         setPistasColumnas(Analizador.single.matCol.ToArray());
         setMatrizSize(Analizador.single.cantFilCol[0], Analizador.single.cantFilCol[1]);
-
-        pintar = true;
         Thread hilo = new Thread(inicioThread);
         hilo.Start();
         //imprimir(matriz);
@@ -65,7 +74,11 @@ public class NuevaLogica : MonoBehaviour
 
     public void inicioThread()
     {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
         resolver(0, matriz);
+        print(stopwatch.ElapsedMilliseconds);
+        stopwatch.Stop();
     }
     public Boolean resolver(int indice, int[][] pMatriz)
     {
@@ -187,53 +200,66 @@ public class NuevaLogica : MonoBehaviour
         List<int> copyPista;
         Revisadores.Revisador[] revisadores = new Revisadores.Revisador[filasTamano];
         int inicio = pColumnasEditadas.First(), final = pColumnasEditadas.Last();
-        int iniRes=0, finRes=0;
+        int iniRes = 0, finRes = 0;
         Boolean unaPista = false;
-        if(esUltPist){
-                if(pistFilMaList[numFila].GetLength(0) > 1){
-                    inicio = 0;
-                    final = nuevaMatriz.GetLength(0)-1;
-                }else{
-                    for(int i = inicio; i <= final; i++){
-                        copyPista = pistColMaList[i].ToList();
-                        revisadores[i] = new Revisadores.Revisador(0, nuevaMatriz[i], 0, copyPista, numFila);
-                        revisadores[i].revisarColumnas();
-                        if(revisadores[i].errorColumna){
-                            return false;
-                        }                  
-                    }
-                    unaPista = true;
-                    iniRes = inicio;
-                    finRes = final;
-                    inicio = 0;
-                    final = nuevaMatriz.GetLength(0)-1;
-                } 
+        if (esUltPist)
+        {
+            if (pistFilMaList[numFila].GetLength(0) > 1)
+            {
+                inicio = 0;
+                final = nuevaMatriz.GetLength(0) - 1;
             }
-            for(int i = inicio; i <= final; i++){
-                if(unaPista){
-                    if(i>=iniRes & i<=finRes){
-                        continue;
-                    }
-                }
-                copyPista = pistColMaList[i].ToList();
-                revisadores[i] = new Revisadores.Revisador(0, nuevaMatriz[i], 0, copyPista, numFila);
-                revisadores[i].revisarColumnas();
-                if(revisadores[i].errorColumna){
-                    return false;
-                }                   
-            }
-            if(esUltPist & numFila<pMatrizTmp.GetLength(0)-1){
-                int pistasSigFila = 0;
+            else
+            {
                 for (int i = inicio; i <= final; i++)
-                {   
-                    if(revisadores[i].faltaPunto>0){
-                        pistasSigFila++;
+                {
+                    copyPista = pistColMaList[i].ToList();
+                    revisadores[i] = new Revisadores.Revisador(0, nuevaMatriz[i], 0, copyPista, numFila);
+                    revisadores[i].revisarColumnas();
+                    if (revisadores[i].errorColumna)
+                    {
+                        return false;
                     }
                 }
-                if(pistasSigFila > pistFilMaList[numFila+1].Sum()){
-                    return false;
+                unaPista = true;
+                iniRes = inicio;
+                finRes = final;
+                inicio = 0;
+                final = nuevaMatriz.GetLength(0) - 1;
+            }
+        }
+        for (int i = inicio; i <= final; i++)
+        {
+            if (unaPista)
+            {
+                if (i >= iniRes & i <= finRes)
+                {
+                    continue;
                 }
             }
+            copyPista = pistColMaList[i].ToList();
+            revisadores[i] = new Revisadores.Revisador(0, nuevaMatriz[i], 0, copyPista, numFila);
+            revisadores[i].revisarColumnas();
+            if (revisadores[i].errorColumna)
+            {
+                return false;
+            }
+        }
+        if (esUltPist & numFila < pMatrizTmp.GetLength(0) - 1)
+        {
+            int pistasSigFila = 0;
+            for (int i = inicio; i <= final; i++)
+            {
+                if (revisadores[i].faltaPunto > 0)
+                {
+                    pistasSigFila++;
+                }
+            }
+            if (pistasSigFila > pistFilMaList[numFila + 1].Sum())
+            {
+                return false;
+            }
+        }
         return true;
     }
 }
